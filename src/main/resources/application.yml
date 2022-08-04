@@ -1,0 +1,116 @@
+spring:
+  # 静态资源处理
+  resources:
+    # 启用默认静态资源处理，默认启用
+    add-mappings: true
+    cache:
+      cachecontrol:
+        # 缓存相应时间
+        max-age: 3600
+    chain:
+      # 资源链启用缓存，默认启用
+      cache: true
+      # 启动资源链，默认禁用
+      enabled: true
+      # 启用压缩资源解析，默认禁用
+      compressed: true
+      # h5应用缓存，默认禁用
+      html-application-cache: true
+    static-locations: classpath:/static/
+  # thymeleaf配置
+  thymeleaf:
+    # 关闭缓存
+    cache: false
+  datasource:
+    # 数据源配置
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/seckill?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    hikari:
+      # 连接池名
+      pool-name: DateHikariCP
+      # 最小空闲连接数
+      minimum-idle: 5
+      # 空闲连接最大存活时间：默认10min
+      idle-timeout: 1800000
+      # 最大连接数
+      maximum-pool-size: 10
+      # 自动提交
+      auto-commit: true
+      # 连接存活时间
+      max-lifetime: 1800000
+      # 连接超时时间
+      connection-timeout: 3000
+      # 测试连接是否可用
+      connection-test-query: SELECT 1
+
+  redis:
+    # 服务器地址
+    host: 127.0.0.1
+    # 端口号
+    port: 6379
+    # 数据库
+    database: 0
+    # 超时时间
+    timeout: 10000ms
+    lettuce:
+      pool:
+        # 最大连接数
+        max-active: 8
+        # 最大连接阻塞时间
+        max-wait: 10000ms
+        # 最大最小空闲连接
+        max-idle: 200
+        min-idle: 5
+
+  rabbitmq:
+    # 服务器
+    host: 127.0.0.1
+    # 默认用户名，密码
+    username: guest
+    password: guest
+    virtual-host: /
+    # 端口
+    port: 5672
+    listener:
+      simple:
+        # 消费者最小数量
+        concurrency: 10
+        # 消费者最大数量
+        max-concurrency: 10
+        # 限制消费者灭磁处理一条消息，
+        prefetch: 1
+        # 启动是是否默认启动容器
+        auto-startup: true
+        # 消息被拒绝时是否重新进入队列
+        default-requeue-rejected: true
+    template:
+      retry:
+        # 发布重试，默认为false
+        enabled: true
+        # 重试时间
+        initial-interval: 1000ms
+        # 重试次数
+        max-attempts: 3
+        # 重试最大间隔时间
+        max-interval: 10000ms
+        # 重试的间隔乘数
+        multiplier: 1
+
+
+
+
+
+# mybatis-plus配置
+mybatis-plus:
+  # 配置Mapper.xml
+  mapper-locations: classpath*:/mapper/*Mapper.xml
+  # 配置Mybatis数据类型返回别名（默认类名）
+  type-aliases-package: com.example.seckill.pojo
+
+#Mybatis:SQL打印（方法接口所在包）
+logging:
+  level:
+    com.example.seckill.mapper: debug
+
