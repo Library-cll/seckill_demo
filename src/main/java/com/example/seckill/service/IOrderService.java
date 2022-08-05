@@ -46,4 +46,6 @@ public interface IOrderService extends IService<Order> {
     * @Date: 2022/8/5
     */
     Boolean pathCheck(User user, Long goodsId, String path);
+
+    Boolean checkCaptcha(User user, Long goodsId, String captcha);
 }

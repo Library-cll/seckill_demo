@@ -46,8 +46,14 @@
 <!--                    <input type="hidden" name="goodsId" id="goodsId">-->
 <!--                    <button class="btn btn-primary btn-block" id="buyButton" type="submit">立即秒杀</button>-->
 <!--                </form>-->
-                <button class="btn btn-primary btn-block" id="buyButton" type="button" onclick="getSecKillPath()">立即秒杀</button>
-                <input type="hidden" name="goodsId" id="goodsId">
+                <div class="row">
+                    <div class="form-inline">
+                        <img id="captchaImg"  width="130" height="32" onclick="refreshcaptcha()" style="display: none"/>
+                        <input id="captcha" class="form-control" style="display: none">
+                        <button class="btn btn-primary" id="buyButton" type="button" onclick="getSecKillPath()">立即秒杀</button>
+                        <input type="hidden" name="goodsId" id="goodsId">
+                    </div>
+                </div>
             </td>
         </tr>
         <tr>
@@ -70,16 +76,22 @@
         // countDown();
         getDetail();
     });
+
+    function refreshcaptcha() {
+        $("#captchaImg").attr("src", "/secKill/captcha?goodsId="+$("#goodsId").val()+"&Time="+new Date());
+    }
     
     function getSecKillPath() {
         var goodsId = $("#goodsId").val();
+        var captcha = $("#captcha").val();
         g_showLoading();
 
         $.ajax({
             url:'/secKill/path',
             type:'GET',
             data:{
-                goodsId:goodsId
+                goodsId:goodsId,
+                captcha:captcha
             },
             success:function (data) {
                 if(data.code==200){
@@ -209,9 +221,14 @@
                 clearTimeout(timeout);
             }
             $("#seckillTip").html("秒杀进行中")
+            $("#captchaImg").attr("src", "/secKill/captcha?goodsId="+$("#goodsId").val()+"&Time="+new Date());
+            $("#captcha").show();
+            $("#captchaImg").show();
         }else {
             $("#buyButton").attr("disabled", true);
             $("#seckillTip").html("秒杀已结束")
+            $("#captcha").hide();
+            $("#captchaImg").hide();
         }
     }
 

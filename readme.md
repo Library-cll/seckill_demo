@@ -3,8 +3,3 @@
 + Mysql
 + lombok
 + mybatis-plus
-
-SQL
-```sql
-
-```
