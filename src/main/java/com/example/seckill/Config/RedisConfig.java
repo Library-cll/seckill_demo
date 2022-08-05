@@ -30,11 +30,11 @@ public class RedisConfig {
     }
 
     @Bean
-    public DefaultRedisScript<Boolean> scrip(){
-        DefaultRedisScript<Boolean> script = new DefaultRedisScript<>();
+    public DefaultRedisScript<Long> scrip(){
+        DefaultRedisScript<Long> script = new DefaultRedisScript<>();
         // 脚本位置和
-        script.setLocation(new ClassPathResource("lock.lua"));
-        script.setResultType(Boolean.class);
+        script.setLocation(new ClassPathResource("stock.lua"));
+        script.setResultType(Long.class);
         return script;
     }
 }
