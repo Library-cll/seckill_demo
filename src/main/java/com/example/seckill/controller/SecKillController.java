@@ -21,6 +21,7 @@ import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -61,14 +62,21 @@ public class SecKillController implements InitializingBean {
      * @return: java.lang.String
      * @Date: 2022/8/2
      */
-    @RequestMapping(value = "/doSecKill", method = RequestMethod.POST)
+    @RequestMapping(value = "/{path}/doSecKill", method = RequestMethod.POST)
     @ResponseBody
-    public RespBean doSecKill(Model model, User user, Long goodsId){
+    public RespBean doSecKill(@PathVariable String path, User user, Long goodsId){
         if(null == user){
             return RespBean.error(RespBeanEnum.SESSION_ERROR);
         }
 
         ValueOperations valueOperations = redisTemplate.opsForValue();
+
+        // 检查路径是否正确
+        Boolean check = orderService.pathCheck(user, goodsId, path);
+        if(!check){
+            return RespBean.error(RespBeanEnum.REQUEST_ILLEGAL);
+        }
+
         // 判断是否重复抢购
         SeckillOrder seckillOrder =  ((SeckillOrder) redisTemplate.opsForValue().get("order" + user.getId() + ":" + goodsId));
         if(seckillOrder != null){
@@ -168,6 +176,21 @@ public class SecKillController implements InitializingBean {
         return RespBean.success(orderId);
     }
 
+    /**
+    * 获取秒杀地址
+    * @Param: [user, goodsId]
+    * @return: com.example.seckill.vo.RespBean
+    * @Date: 2022/8/5
+    */
+    @RequestMapping(value = "/path", method = RequestMethod.GET)
+    @ResponseBody
+    public RespBean getSecKillPath(User user, Long goodsId){
+        if(user == null) {
+            return RespBean.error(RespBeanEnum.SESSION_ERROR);
+        }
+        String secKillPath = orderService.create(user, goodsId);
+        return RespBean.success(secKillPath);
+    }
 
     /**
     * 系统初始化时执行，把所有商品库存同步到redis中

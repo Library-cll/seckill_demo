@@ -46,7 +46,7 @@
 <!--                    <input type="hidden" name="goodsId" id="goodsId">-->
 <!--                    <button class="btn btn-primary btn-block" id="buyButton" type="submit">立即秒杀</button>-->
 <!--                </form>-->
-                <button class="btn btn-primary btn-block" id="buyButton" type="button" onclick="doSecKill()">立即秒杀</button>
+                <button class="btn btn-primary btn-block" id="buyButton" type="button" onclick="getSecKillPath()">立即秒杀</button>
                 <input type="hidden" name="goodsId" id="goodsId">
             </td>
         </tr>
@@ -70,10 +70,34 @@
         // countDown();
         getDetail();
     });
+    
+    function getSecKillPath() {
+        var goodsId = $("#goodsId").val();
+        g_showLoading();
 
-    function doSecKill() {
         $.ajax({
-            url: '/secKill/doSecKill',
+            url:'/secKill/path',
+            type:'GET',
+            data:{
+                goodsId:goodsId
+            },
+            success:function (data) {
+                if(data.code==200){
+                    var path = data.object;
+                    doSecKill(path);
+                }else{
+                    layer.msg(data.message)
+                }
+            },
+            error:function () {
+                layer.msg("客户端请求错误")
+            }
+        })
+    }
+
+    function doSecKill(path) {
+        $.ajax({
+            url: '/secKill/'+ path + '/doSecKill',
             type: 'POST',
             data:{
                 goodsId: $("#goodsId").val()
